@@ -58,9 +58,21 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
 export const api = {
   auth: {
     register: (body: { email: string; password: string }) =>
-      request<ApiResponse<AuthResponseData>>('/api/auth/register', {
+      request<ApiResponse<{ email: string; requiresVerification: boolean }>>('/api/auth/register', {
         method: 'POST',
         body: JSON.stringify(body),
+      }),
+
+    verifyOtp: (body: { email: string; otp: string }) =>
+      request<ApiResponse<AuthResponseData>>('/api/auth/verify-otp', {
+        method: 'POST',
+        body: JSON.stringify(body),
+      }),
+
+    resendOtp: (email: string) =>
+      request<ApiResponse<void>>('/api/auth/resend-otp', {
+        method: 'POST',
+        body: JSON.stringify({ email }),
       }),
 
     login: (body: { email: string; password: string }) =>
@@ -79,6 +91,7 @@ export const api = {
         method: 'POST',
       }),
   },
+
   urls: {
     getAll: () =>
       request<ApiResponse<UrlsResponseData>>('/api/urls', {

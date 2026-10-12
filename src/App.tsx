@@ -6,6 +6,7 @@ import { ProtectedRoute } from './routes/ProtectedRoute';
 import { PublicOnlyRoute } from './routes/PublicOnlyRoute';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
+import { VerifyOtpPage } from './pages/VerifyOtpPage';
 import { DashboardPage } from './pages/DashboardPage';
 
 export const App: React.FC = () => {
@@ -26,7 +27,6 @@ export const App: React.FC = () => {
                 }
               />
 
-              {/* Public-only routes (Guests only) */}
               <Route
                 path="/login"
                 element={
@@ -43,8 +43,15 @@ export const App: React.FC = () => {
                   </PublicOnlyRoute>
                 }
               />
+                            <Route
+                path="/verify-otp"
+                element={
+                  <PublicOnlyRoute>
+                    <VerifyOtpPage />
+                  </PublicOnlyRoute>
+                }
+              />
 
-              {/* Protected routes (Authenticated users only) */}
               <Route
                 path="/dashboard"
                 element={
@@ -54,7 +61,6 @@ export const App: React.FC = () => {
                 }
               />
 
-              {/* 404 Fallback */}
               <Route
                 path="*"
                 element={
