@@ -8,6 +8,7 @@ export const LoginPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSlowConnection, setIsSlowConnection] = useState(false);
 
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -19,6 +20,10 @@ export const LoginPage: React.FC = () => {
     e.preventDefault();
     setError(null);
     setIsSubmitting(true);
+    setIsSlowConnection(false);
+
+    // After 5s, show a "server is warming up" notice (Render free tier cold start)
+    const slowTimer = setTimeout(() => setIsSlowConnection(true), 5000);
 
     try {
       await login(email, password);
@@ -27,10 +32,12 @@ export const LoginPage: React.FC = () => {
       if (err instanceof ApiClientError) {
         setError(err.message);
       } else {
-        setError('Failed to login. Please check your credentials.');
+        setError('Unable to connect to the server. Please try again.');
       }
     } finally {
+      clearTimeout(slowTimer);
       setIsSubmitting(false);
+      setIsSlowConnection(false);
     }
   };
 
@@ -45,6 +52,21 @@ export const LoginPage: React.FC = () => {
         </p>
 
         {error && <div className="alert alert-danger">{error}</div>}
+
+        {isSlowConnection && (
+          <div style={{
+            background: '#eff6ff',
+            border: '1px solid #bfdbfe',
+            color: '#1e40af',
+            borderRadius: '8px',
+            padding: '0.75rem 1rem',
+            marginBottom: '1rem',
+            fontSize: '0.875rem',
+            textAlign: 'center',
+          }}>
+            ⏳ Server is warming up — this can take up to 30 seconds on first use. Please wait…
+          </div>
+        )}
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
